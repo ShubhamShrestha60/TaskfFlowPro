@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="90" fill="url(#gradient)" />
+  
+  <!-- Task Flow Lines -->
+  <path d="M60 100 C 60 70, 140 70, 140 100 S 60 130, 60 100" 
+        stroke="white" stroke-width="8" stroke-linecap="round" fill="none" 
+        opacity="0.8" />
+  
+  <!-- Checkmark -->
+  <path d="M85 100 L 95 110 L 115 90" 
+        stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" 
+        fill="none" />
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="100%" stop-color="#6366F1" />
+    </linearGradient>
+  </defs>
+</svg> 
