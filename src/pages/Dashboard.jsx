@@ -2,72 +2,123 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import StatsCard from '../components/dashboard/StatsCard';
 import TaskProgress from '../components/dashboard/TaskProgress';
-import RecentTasks from '../components/dashboard/RecentTasks';
 import ActivityTimeline from '../components/dashboard/ActivityTimeline';
+import RecentTasks from '../components/dashboard/RecentTasks';
 
 const DashboardContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+  padding: ${({ theme }) => theme.spacing.lg};
+  max-width: 1400px;
+  margin: 0 auto;
 `;
 
-const Section = styled(motion.section)`
-  background: ${({ theme }) => theme.cardBg};
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+const DashboardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const MainContent = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+
+  @media (max-width: 1200px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const WelcomeSection = styled(motion.div)`
+  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const WelcomeText = styled.div`
+  h1 {
+    font-size: ${({ theme }) => theme.fontSize.xxl};
+    font-weight: ${({ theme }) => theme.fontWeight.semibold};
+    color: ${({ theme }) => theme.text};
+    margin-bottom: ${({ theme }) => theme.spacing.xs};
+  }
+
+  p {
+    color: ${({ theme }) => theme.textSecondary};
+    font-size: ${({ theme }) => theme.fontSize.lg};
+  }
+`;
+
+const DateDisplay = styled.div`
+  text-align: right;
+  color: ${({ theme }) => theme.textSecondary};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+
+  .date {
+    font-size: ${({ theme }) => theme.fontSize.lg};
+    font-weight: ${({ theme }) => theme.fontWeight.medium};
+    color: ${({ theme }) => theme.text};
+    margin-bottom: ${({ theme }) => theme.spacing.xs};
+  }
 `;
 
 const Dashboard = () => {
   const stats = [
-    { title: 'Total Tasks', value: 24, icon: '📝', trend: 'up' },
-    { title: 'Completed', value: 12, icon: '✅', trend: 'up' },
-    { title: 'In Progress', value: 8, icon: '⏳', trend: 'down' },
-    { title: 'Overdue', value: 4, icon: '⚠️', trend: 'same' },
+    { title: 'Total Tasks', value: '248', trend: '+12%', color: 'primary' },
+    { title: 'In Progress', value: '45', trend: '+5%', color: 'warning' },
+    { title: 'Completed', value: '189', trend: '+18%', color: 'success' },
+    { title: 'Overdue', value: '14', trend: '-2%', color: 'error' },
   ];
 
+  const today = new Date();
+  const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
   return (
-    <>
-      <h1>Dashboard Overview</h1>
-      <DashboardContainer>
-        {stats.map((stat, index) => (
-          <StatsCard
-            key={index}
-            title={stat.title}
-            value={stat.value}
-            icon={stat.icon}
-            trend={stat.trend}
-          />
-        ))}
-      </DashboardContainer>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginTop: '1.5rem' }}>
-        <Section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <TaskProgress />
-        </Section>
-        <Section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <RecentTasks />
-        </Section>
-      </div>
-
-      <Section
-        style={{ marginTop: '1.5rem' }}
+    <DashboardContainer>
+      <WelcomeSection
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
+        transition={{ duration: 0.4 }}
       >
-        <ActivityTimeline />
-      </Section>
-    </>
+        <WelcomeText>
+          <h1>Welcome back, Shubham! 👋</h1>
+          <p>Here's what's happening with your projects today.</p>
+        </WelcomeText>
+        <DateDisplay>
+          <div className="date">{today.toLocaleDateString(undefined, dateOptions)}</div>
+          <div>Last updated: Just now</div>
+        </DateDisplay>
+      </WelcomeSection>
+
+      <DashboardGrid>
+        {stats.map((stat, index) => (
+          <motion.div
+            key={stat.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: index * 0.1 }}
+          >
+            <StatsCard {...stat} />
+          </motion.div>
+        ))}
+      </DashboardGrid>
+
+      <MainContent>
+        <TaskProgress />
+        <RecentTasks />
+      </MainContent>
+
+      <ActivityTimeline />
+    </DashboardContainer>
   );
 };
 

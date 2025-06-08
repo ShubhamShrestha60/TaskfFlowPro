@@ -1,152 +1,151 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { CircularProgressbarWithChildren, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
 
-const ProgressContainer = styled(motion.div)`
+const Container = styled(motion.div)`
+  background: ${({ theme }) => theme.cardBg};
+  border-radius: ${({ theme }) => theme.radius.lg};
   padding: 1.5rem;
+  border: 1px solid ${({ theme }) => theme.borderColor};
   height: 100%;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 `;
 
-const ProgressHeader = styled.div`
+const Header = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  position: relative;
-  z-index: 1;
 `;
 
-const Title = styled.h3`
+const Title = styled.h2`
   font-size: 1.25rem;
   font-weight: 600;
-  background: ${({ theme }) => theme.textGradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: ${({ theme }) => theme.text};
 `;
 
 const TimeFilter = styled.div`
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.cardBg};
-  border: ${({ theme }) => theme.border};
   font-size: 0.875rem;
-  color: ${({ theme }) => theme.gray};
+  color: ${({ theme }) => theme.textSecondary};
   display: flex;
   align-items: center;
   gap: 0.5rem;
-
-  &::before {
-    content: '';
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: ${({ theme }) => theme.primary};
-  }
 `;
 
-const ProgressBars = styled.div`
+const ProgressGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 2rem;
-  margin-top: 1.5rem;
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-  }
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1.5rem;
+  flex: 1;
+  align-items: end;
 `;
 
 const ProgressItem = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background: ${({ theme }) => theme.glassMorphismDark};
-  border-radius: 16px;
-  border: ${({ theme }) => theme.border};
+  height: 100%;
+  position: relative;
 `;
 
-const ProgressLabel = styled.span`
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: ${({ theme }) => theme.text};
+const BarContainer = styled.div`
+  width: 100%;
+  height: 180px;
+  position: relative;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: flex-end;
 `;
 
-const ProgressValue = styled.div`
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: ${({ color }) => color};
+const Bar = styled(motion.div)`
+  width: 100%;
+  background: ${({ $color }) => $color};
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
 `;
 
-const Decoration = styled.div`
+const BarLabel = styled.div`
   position: absolute;
-  right: -50px;
-  bottom: -50px;
-  width: 200px;
-  height: 200px;
-  background: ${({ theme }) => theme.gradientPrimary};
-  filter: blur(60px);
-  opacity: 0.05;
-  border-radius: 50%;
-  pointer-events: none;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: ${({ $color }) => $color};
+  white-space: nowrap;
+`;
+
+const CategoryName = styled.div`
+  font-size: 0.875rem;
+  color: ${({ theme }) => theme.textSecondary};
+  text-align: center;
+  margin-top: 0.5rem;
+`;
+
+const TaskCount = styled.div`
+  font-size: 0.75rem;
+  color: ${({ theme }) => theme.textTertiary};
+  margin-top: 0.25rem;
 `;
 
 const TaskProgress = () => {
   const progressData = [
-    { label: 'Design', value: 75, color: '#2563eb' },
-    { label: 'Development', value: 50, color: '#4f46e5' },
-    { label: 'Testing', value: 30, color: '#7c3aed' },
-    { label: 'Deployment', value: 10, color: '#9333ea' },
+    { category: 'High Priority', progress: 75, tasks: 12, color: '#ef4444' },
+    { category: 'In Progress', progress: 60, tasks: 8, color: '#3b82f6' },
+    { category: 'Completed', progress: 90, tasks: 15, color: '#10b981' },
+    { category: 'Upcoming', progress: 30, tasks: 6, color: '#8b5cf6' },
+    { category: 'Overdue', progress: 45, tasks: 4, color: '#f59e0b' }
   ];
 
   return (
-    <ProgressContainer
+    <Container
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
-      <Decoration />
-      <ProgressHeader>
+      <Header>
         <Title>Task Progress</Title>
-        <TimeFilter>Last 7 days</TimeFilter>
-      </ProgressHeader>
-      <ProgressBars>
+        <TimeFilter>This Week</TimeFilter>
+      </Header>
+
+      <ProgressGrid>
         {progressData.map((item, index) => (
           <ProgressItem
-            key={index}
+            key={item.category}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3, delay: index * 0.1 }}
           >
-            <div style={{ width: 120, height: 120 }}>
-              <CircularProgressbarWithChildren
-                value={item.value}
-                styles={buildStyles({
-                  pathColor: item.color,
-                  trailColor: 'rgba(200, 200, 200, 0.1)',
-                  strokeLinecap: 'round',
-                  pathTransition: 'stroke-dashoffset 0.5s ease',
-                })}
-              >
-                <ProgressValue style={{ color: item.color }}>
-                  {item.value}%
-                </ProgressValue>
-              </CircularProgressbarWithChildren>
-            </div>
-            <ProgressLabel>{item.label}</ProgressLabel>
+            <BarContainer>
+              <BarLabel $color={item.color}>{item.progress}%</BarLabel>
+              <Bar
+                $color={item.color}
+                initial={{ height: 0 }}
+                animate={{ height: `${item.progress}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+              />
+            </BarContainer>
+            <CategoryName>{item.category}</CategoryName>
+            <TaskCount>{item.tasks} tasks</TaskCount>
           </ProgressItem>
         ))}
-      </ProgressBars>
-    </ProgressContainer>
+      </ProgressGrid>
+    </Container>
   );
 };
 

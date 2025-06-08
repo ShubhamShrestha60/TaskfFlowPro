@@ -1,142 +1,140 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 const Card = styled(motion.div)`
-  background: ${({ theme }) => theme.glassMorphismDark};
-  backdrop-filter: ${({ theme }) => theme.backdropFilter};
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: ${({ theme }) => theme.border};
+  background: ${({ theme }) => theme.cardBg};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  padding: ${({ theme }) => theme.spacing.lg};
   height: 100%;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  transition: ${({ theme }) => theme.transition.base};
   overflow: hidden;
-  min-height: 160px;
 
-  &::before {
+  &:hover {
+    border-color: ${({ theme, $color }) => theme[$color]};
+    transform: translateY(-4px);
+  }
+
+  &::after {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
     right: 0;
-    height: 3px;
-    background: ${({ theme, trend }) => 
-      trend === 'up' ? theme.gradientSuccess :
-      trend === 'down' ? theme.gradientDanger :
-      theme.gradientPrimary};
+    width: 40%;
+    height: 100%;
+    background: ${({ theme, $color }) => theme[$color]}10;
+    clip-path: polygon(100% 0, 100% 100%, 0 100%, 60% 0);
+    transition: ${({ theme }) => theme.transition.base};
+  }
+
+  &:hover::after {
+    width: 60%;
+    background: ${({ theme, $color }) => theme[$color]}15;
   }
 `;
 
-const CardHeader = styled.div`
+const Header = styled.div`
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 1.25rem;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
   position: relative;
   z-index: 1;
 `;
 
-const Title = styled.h4`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.grayLight};
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-`;
-
-const Value = styled.h3`
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0.5rem 0;
-  background: ${({ theme }) => theme.textGradient};
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  position: relative;
-  z-index: 1;
+const Title = styled.h3`
+  color: ${({ theme }) => theme.textSecondary};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
 `;
 
 const Trend = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  background: ${({ theme, positive }) => 
-    positive ? `${theme.success}15` : `${theme.danger}15`};
-  color: ${({ theme, positive }) => 
-    positive ? theme.success : theme.danger};
-  width: fit-content;
-  position: relative;
-  z-index: 1;
-`;
+  gap: ${({ theme }) => theme.spacing.xs};
+  padding: ${({ theme }) => theme.spacing.xs} ${({ theme }) => theme.spacing.sm};
+  border-radius: ${({ theme }) => theme.radius.full};
+  font-size: ${({ theme }) => theme.fontSize.xs};
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  background: ${({ $isPositive, theme }) => 
+    $isPositive ? theme.success + '15' : theme.error + '15'};
+  color: ${({ $isPositive, theme }) => 
+    $isPositive ? theme.success : theme.error};
 
-const IconWrapper = styled.div`
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: ${({ theme }) => theme.gradientPrimary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem;
-  box-shadow: 0 8px 16px ${({ theme }) => `${theme.primary}20`};
-  position: relative;
-  z-index: 1;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: -2px;
-    border-radius: 16px;
-    padding: 2px;
-    background: ${({ theme }) => theme.gradientPrimary};
-    -webkit-mask: 
-      linear-gradient(#fff 0 0) content-box, 
-      linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.5;
+  svg {
+    font-size: 0.75rem;
   }
 `;
 
-const Decoration = styled.div`
-  position: absolute;
-  right: -20px;
-  bottom: -20px;
-  width: 120px;
-  height: 120px;
-  background: ${({ theme }) => theme.gradientPrimary};
-  filter: blur(40px);
-  opacity: 0.1;
-  border-radius: 50%;
-  pointer-events: none;
+const Content = styled.div`
+  position: relative;
+  z-index: 1;
 `;
 
-const StatsCard = ({ title, value, icon, trend }) => {
-  const isPositive = trend === 'up';
-  
+const Value = styled.div`
+  font-size: ${({ theme }) => theme.fontSize.xxxl};
+  font-weight: ${({ theme }) => theme.fontWeight.bold};
+  color: ${({ theme }) => theme.text};
+  line-height: 1;
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+`;
+
+const Subtitle = styled.div`
+  color: ${({ theme }) => theme.textSecondary};
+  font-size: ${({ theme }) => theme.fontSize.sm};
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.xs};
+
+  strong {
+    color: ${({ theme }) => theme.text};
+  }
+`;
+
+const getSubtitle = (title, value) => {
+  switch (title.toLowerCase().split(' ')[0]) {
+    case 'total':
+      return `${value} tasks in total`;
+    case 'in':
+      return 'Active tasks in progress';
+    case 'completed':
+      return 'Tasks completed this month';
+    case 'overdue':
+      return 'Tasks past due date';
+    default:
+      return '';
+  }
+};
+
+const StatsCard = ({ title, value, trend, color = 'primary' }) => {
+  const isPositive = trend.startsWith('+');
+
   return (
     <Card
-      trend={trend}
+      $color={color}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      whileHover={{ 
-        y: -5,
-        transition: { duration: 0.2 }
-      }}
     >
-      <Decoration />
-      <CardHeader>
+      <Header>
         <Title>{title}</Title>
-        <IconWrapper>{icon}</IconWrapper>
-      </CardHeader>
-      <Value>{value}</Value>
-      <Trend positive={isPositive}>
-        {isPositive ? '↑' : '↓'} {trend === 'up' ? 'Increased' : trend === 'down' ? 'Decreased' : 'No change'}
-      </Trend>
+        <Trend $isPositive={isPositive}>
+          {isPositive ? <FaArrowUp /> : <FaArrowDown />}
+          {trend}
+        </Trend>
+      </Header>
+
+      <Content>
+        <Value>{value}</Value>
+        <Subtitle>
+          {getSubtitle(title, value)}
+        </Subtitle>
+      </Content>
     </Card>
   );
 };

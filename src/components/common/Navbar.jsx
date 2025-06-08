@@ -1,94 +1,86 @@
+import { useState } from 'react';
 import styled from 'styled-components';
-import { FiSearch, FiBell, FiSettings } from 'react-icons/fi';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  FaSearch, 
+  FaBell, 
+  FaUserCircle, 
+  FaCog, 
+  FaSignOutAlt,
+  FaChevronDown
+} from 'react-icons/fa';
 
-const NavbarContainer = styled.nav`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 1.5rem;
-  background: ${({ theme }) => theme.glassMorphismDark};
-  backdrop-filter: ${({ theme }) => theme.backdropFilter};
-  border-radius: 16px;
-  border: ${({ theme }) => theme.border};
-  margin-bottom: 1.5rem;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-  }
-`;
-
-const SearchBar = styled.div`
-  display: flex;
-  align-items: center;
+const NavbarContainer = styled(motion.nav)`
+  position: sticky;
+  top: 0;
+  right: 0;
+  left: 280px;
+  height: 80px;
+  padding: 0 ${({ theme }) => theme.spacing.lg};
   background: ${({ theme }) => theme.cardBg};
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  width: 360px;
-  border: ${({ theme }) => theme.border};
-  transition: all 0.3s ease;
-
-  &:focus-within {
-    box-shadow: 0 0 0 2px ${({ theme }) => `${theme.primary}30`};
-    border-color: ${({ theme }) => theme.primary};
-  }
-
-  input {
-    border: none;
-    background: transparent;
-    margin-left: 0.75rem;
-    width: 100%;
-    color: ${({ theme }) => theme.text};
-    font-size: 0.95rem;
-
-    &::placeholder {
-      color: ${({ theme }) => theme.gray};
-    }
-
-    &:focus {
-      outline: none;
-    }
-  }
-
-  svg {
-    color: ${({ theme }) => theme.gray};
-    min-width: 20px;
-  }
-
-  @media (max-width: 768px) {
-    width: 100%;
-  }
+  border-bottom: 1px solid ${({ theme }) => theme.borderColor};
+  z-index: ${({ theme }) => theme.zIndex.navbar};
+  ${({ theme }) => theme.mixins.flexBetween};
 `;
 
-const UserActions = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-
-  @media (max-width: 768px) {
-    width: 100%;
-    justify-content: space-between;
-  }
-`;
-
-const ActionButton = styled.button`
-  background: ${({ theme }) => theme.cardBg};
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: ${({ theme }) => theme.border};
-  color: ${({ theme }) => theme.text};
+const SearchContainer = styled.div`
   position: relative;
-  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 ${({ theme }) => theme.spacing.xl};
+`;
+
+const SearchInput = styled.input`
+  width: 100%;
+  height: 44px;
+  padding: 0 ${({ theme }) => theme.spacing.xl};
+  padding-left: 48px;
+  background: ${({ theme }) => theme.bgSecondary};
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  border-radius: ${({ theme }) => theme.radius.full};
+  color: ${({ theme }) => theme.text};
+  font-size: ${({ theme }) => theme.fontSize.base};
+  transition: ${({ theme }) => theme.transition.base};
+
+  &:focus {
+    outline: none;
+    border-color: ${({ theme }) => theme.primary};
+    background: ${({ theme }) => theme.cardBg};
+    box-shadow: 0 0 0 4px ${({ theme }) => theme.primary}20;
+  }
+
+  &::placeholder {
+    color: ${({ theme }) => theme.textSecondary};
+  }
+`;
+
+const SearchIcon = styled(FaSearch)`
+  position: absolute;
+  left: ${({ theme }) => theme.spacing.lg};
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${({ theme }) => theme.textSecondary};
+  font-size: 1.1rem;
+  pointer-events: none;
+`;
+
+const NavActions = styled.div`
+  ${({ theme }) => theme.mixins.flexCenter};
+  gap: ${({ theme }) => theme.spacing.md};
+`;
+
+const IconButton = styled(motion.button)`
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: ${({ theme }) => theme.radius.lg};
+  color: ${({ theme }) => theme.textSecondary};
+  ${({ theme }) => theme.mixins.flexCenter};
+  transition: ${({ theme }) => theme.transition.base};
 
   &:hover {
-    transform: translateY(-2px);
-    background: ${({ theme }) => theme.glassMorphism};
-    border-color: ${({ theme }) => theme.primary};
+    background: ${({ theme }) => theme.bgSecondary};
+    color: ${({ theme }) => theme.text};
   }
 
   svg {
@@ -96,97 +88,192 @@ const ActionButton = styled.button`
   }
 `;
 
-const NotificationBadge = styled.span`
+const NotificationBadge = styled(motion.span)`
   position: absolute;
-  top: -4px;
-  right: -4px;
+  top: -2px;
+  right: -2px;
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: ${({ theme }) => theme.gradientDanger};
+  background: ${({ theme }) => theme.error};
   color: white;
   font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: ${({ theme }) => theme.fontWeight.medium};
+  ${({ theme }) => theme.mixins.flexCenter};
   border: 2px solid ${({ theme }) => theme.cardBg};
 `;
 
-const UserProfile = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  background: ${({ theme }) => theme.cardBg};
-  padding: 0.5rem;
-  padding-right: 1.25rem;
-  border-radius: 12px;
-  border: ${({ theme }) => theme.border};
-  cursor: pointer;
-  transition: all 0.3s ease;
+const ProfileButton = styled(motion.button)`
+  ${({ theme }) => theme.mixins.flexCenter};
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => theme.spacing.sm} ${({ theme }) => theme.spacing.lg};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  background: transparent;
+  transition: ${({ theme }) => theme.transition.base};
 
   &:hover {
-    transform: translateY(-2px);
-    background: ${({ theme }) => theme.glassMorphism};
-    border-color: ${({ theme }) => theme.primary};
+    background: ${({ theme }) => theme.bgSecondary};
   }
 
-  @media (max-width: 768px) {
-    flex: 1;
-    justify-content: space-between;
+  img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .profile-info {
+    text-align: left;
+    margin-right: ${({ theme }) => theme.spacing.sm};
+
+    h3 {
+      color: ${({ theme }) => theme.text};
+      font-size: ${({ theme }) => theme.fontSize.base};
+      font-weight: ${({ theme }) => theme.fontWeight.medium};
+      margin: 0;
+    }
+
+    p {
+      color: ${({ theme }) => theme.textSecondary};
+      font-size: ${({ theme }) => theme.fontSize.sm};
+      margin: 0;
+    }
+  }
+
+  svg {
+    color: ${({ theme }) => theme.textSecondary};
+    font-size: 1rem;
+    transition: transform ${({ theme }) => theme.transition.base};
+    transform: ${({ isOpen }) => isOpen ? 'rotate(180deg)' : 'rotate(0)'};
   }
 `;
 
-const Avatar = styled.div`
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  background: ${({ theme }) => theme.gradientPrimary};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: 600;
-  font-size: 1.1rem;
+const ProfileDropdown = styled(motion.div)`
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  background: ${({ theme }) => theme.cardBg};
+  border: 1px solid ${({ theme }) => theme.borderColor};
+  border-radius: ${({ theme }) => theme.radius.lg};
+  box-shadow: 0 4px 20px ${({ theme }) => theme.shadowColor};
+  overflow: hidden;
 `;
 
-const UserInfo = styled.div`
-  text-align: left;
+const DropdownItem = styled(motion.button)`
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing.md} ${({ theme }) => theme.spacing.lg};
+  ${({ theme }) => theme.mixins.flexBetween};
+  color: ${({ theme, danger }) => danger ? theme.error : theme.text};
+  transition: ${({ theme }) => theme.transition.base};
+
+  &:hover {
+    background: ${({ theme }) => theme.bgSecondary};
+  }
+
+  svg {
+    font-size: 1.1rem;
+  }
 `;
 
-const UserName = styled.div`
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: ${({ theme }) => theme.text};
-`;
-
-const UserRole = styled.div`
-  font-size: 0.8rem;
-  color: ${({ theme }) => theme.gray};
-`;
+const dropdownVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: -10,
+    transition: {
+      duration: 0.2
+    }
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.2
+    }
+  }
+};
 
 const Navbar = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [notifications] = useState(3);
+
   return (
-    <NavbarContainer>
-      <SearchBar>
-        <FiSearch />
-        <input type="text" placeholder="Search tasks, projects, or team members..." />
-      </SearchBar>
-      <UserActions>
-        <ActionButton>
-          <FiBell />
-          <NotificationBadge>3</NotificationBadge>
-        </ActionButton>
-        <ActionButton>
-          <FiSettings />
-        </ActionButton>
-        <UserProfile>
-          <Avatar>JD</Avatar>
-          <UserInfo>
-            <UserName>John Doe</UserName>
-            <UserRole>Project Manager</UserRole>
-          </UserInfo>
-        </UserProfile>
-      </UserActions>
+    <NavbarContainer
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <SearchContainer>
+        <SearchIcon />
+        <SearchInput
+          type="text"
+          placeholder="Search tasks, projects, or team members..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </SearchContainer>
+
+      <NavActions>
+        <IconButton
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <FaBell />
+          {notifications > 0 && (
+            <NotificationBadge
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            >
+              {notifications}
+            </NotificationBadge>
+          )}
+        </IconButton>
+
+        <div style={{ position: 'relative' }}>
+          <ProfileButton
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
+            isOpen={isProfileOpen}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <img src="https://ui-avatars.com/api/?name=Shubham+Shrestha&background=random" alt="Profile" />
+            <div className="profile-info">
+              <h3>Shubham Shrestha</h3>
+              <p>Project Manager</p>
+            </div>
+            <FaChevronDown />
+          </ProfileButton>
+
+          <AnimatePresence>
+            {isProfileOpen && (
+              <ProfileDropdown
+                variants={dropdownVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+              >
+                <DropdownItem
+                  whileHover={{ x: 4 }}
+                  onClick={() => {/* Handle profile click */}}
+                >
+                  <span>Profile Settings</span>
+                  <FaCog />
+                </DropdownItem>
+                <DropdownItem
+                  whileHover={{ x: 4 }}
+                  danger
+                  onClick={() => {/* Handle logout click */}}
+                >
+                  <span>Logout</span>
+                  <FaSignOutAlt />
+                </DropdownItem>
+              </ProfileDropdown>
+            )}
+          </AnimatePresence>
+        </div>
+      </NavActions>
     </NavbarContainer>
   );
 };

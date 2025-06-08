@@ -8,6 +8,9 @@ import Dashboard from './pages/Dashboard';
 import Tasks from './pages/Tasks';
 import Calendar from './pages/Calendar';
 import Settings from './pages/Settings';
+import Inbox from './pages/Inbox';
+import Team from './pages/Team';
+import Notifications from './pages/Notifications';
 
 function App() {
   const [theme, setTheme] = useState('dark');
@@ -24,6 +27,9 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/tasks" element={<Tasks />} />
+            <Route path="/inbox" element={<Inbox />} />
+            <Route path="/team" element={<Team />} />
+            <Route path="/notifications" element={<Notifications />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/settings" element={<Settings />} />
           </Routes>
