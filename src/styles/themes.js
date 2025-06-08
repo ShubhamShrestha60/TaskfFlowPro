@@ -65,6 +65,7 @@ const commonTokens = {
     base: 0,
     raised: 1,
     dropdown: 1000,
+    navbar: 1200,
     sticky: 1100,
     overlay: 1300,
     modal: 1400,

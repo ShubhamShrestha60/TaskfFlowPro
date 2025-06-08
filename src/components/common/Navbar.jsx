@@ -9,6 +9,7 @@ import {
   FaSignOutAlt,
   FaChevronDown
 } from 'react-icons/fa';
+import ProfileSettings from './ProfileSettings';
 
 const NavbarContainer = styled(motion.nav)`
   position: sticky;
@@ -196,7 +197,13 @@ const dropdownVariants = {
 const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [notifications] = useState(3);
+
+  const handleLogout = () => {
+    // Handle logout logic here
+    console.log('Logging out...');
+  };
 
   return (
     <NavbarContainer
@@ -249,23 +256,19 @@ const Navbar = () => {
           <AnimatePresence>
             {isProfileOpen && (
               <ProfileDropdown
-                variants={dropdownVariants}
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
+                variants={dropdownVariants}
               >
-                <DropdownItem
-                  whileHover={{ x: 4 }}
-                  onClick={() => {/* Handle profile click */}}
-                >
-                  <span>Profile Settings</span>
+                <DropdownItem onClick={() => {
+                  setIsSettingsOpen(true);
+                  setIsProfileOpen(false);
+                }}>
+                  <span>Settings</span>
                   <FaCog />
                 </DropdownItem>
-                <DropdownItem
-                  whileHover={{ x: 4 }}
-                  danger
-                  onClick={() => {/* Handle logout click */}}
-                >
+                <DropdownItem onClick={handleLogout} danger>
                   <span>Logout</span>
                   <FaSignOutAlt />
                 </DropdownItem>
@@ -274,6 +277,11 @@ const Navbar = () => {
           </AnimatePresence>
         </div>
       </NavActions>
+
+      <ProfileSettings 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </NavbarContainer>
   );
 };

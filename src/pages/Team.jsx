@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { FiSearch, FiFilter, FiMail, FiMessageSquare, FiMoreVertical } from 'react-icons/fi';
+import MessageModal from '../components/team/MessageModal';
+import SimpleChat from '../components/team/SimpleChat';
 
 const PageContainer = styled.div`
   padding: 2rem;
@@ -246,6 +248,8 @@ const getRandomColor = () => {
 const Team = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [messageModal, setMessageModal] = useState({ isOpen: false, recipient: null });
+  const [chatModal, setChatModal] = useState({ isOpen: false, recipient: null });
 
   const teamMembers = [
     {
@@ -393,10 +397,10 @@ const Team = () => {
             </ProjectList>
 
             <Actions>
-              <ActionButton>
+              <ActionButton onClick={() => setMessageModal({ isOpen: true, recipient: member.name })}>
                 <FiMail /> Message
               </ActionButton>
-              <ActionButton>
+              <ActionButton onClick={() => setChatModal({ isOpen: true, recipient: member.name })}>
                 <FiMessageSquare /> Chat
               </ActionButton>
               <ActionButton>
@@ -406,6 +410,18 @@ const Team = () => {
           </MemberCard>
         ))}
       </TeamGrid>
+
+      <MessageModal
+        isOpen={messageModal.isOpen}
+        onClose={() => setMessageModal({ isOpen: false, recipient: null })}
+        recipient={messageModal.recipient}
+      />
+
+      <SimpleChat
+        isOpen={chatModal.isOpen}
+        onClose={() => setChatModal({ isOpen: false, recipient: null })}
+        recipient={chatModal.recipient}
+      />
     </PageContainer>
   );
 };

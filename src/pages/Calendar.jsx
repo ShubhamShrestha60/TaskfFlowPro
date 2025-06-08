@@ -10,6 +10,7 @@ import {
   FaUsers,
   FaEllipsisH
 } from 'react-icons/fa';
+import NewEventModal from '../components/calendar/NewEventModal';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
@@ -208,8 +209,9 @@ const EventMeta = styled.div`
 `;
 
 const Calendar = () => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [isNewEventModalOpen, setIsNewEventModalOpen] = useState(false);
 
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
@@ -273,7 +275,7 @@ const Calendar = () => {
   };
 
   const isSelected = (date) => {
-    return date && 
+    return date && selectedDate && 
       date.getDate() === selectedDate.getDate() &&
       date.getMonth() === selectedDate.getMonth() &&
       date.getFullYear() === selectedDate.getFullYear();
@@ -286,30 +288,38 @@ const Calendar = () => {
   };
 
   const navigateMonth = (direction) => {
-    setCurrentMonth(new Date(
-      currentMonth.getFullYear(),
-      currentMonth.getMonth() + direction,
+    setCurrentDate(new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() + direction,
       1
     ));
+  };
+
+  const handleNewEvent = (eventData) => {
+    // Here you would typically save the event to your backend
+    console.log('New event:', eventData);
+    // For now, we'll just close the modal
+    setIsNewEventModalOpen(false);
   };
 
   return (
     <PageContainer>
       <Header>
         <Title>Calendar</Title>
-        <Subtitle>Manage your schedule and events</Subtitle>
+        <Subtitle>Schedule and manage your events</Subtitle>
       </Header>
 
       <CalendarHeader>
         <Button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
+          onClick={() => setIsNewEventModalOpen(true)}
         >
           <FaCalendarPlus /> New Event
         </Button>
         
         <MonthNavigation>
-          <h2>{currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
+          <h2>{currentDate.toLocaleString('default', { month: 'long', year: 'numeric' })}</h2>
           <NavigationButtons>
             <IconButton
               whileHover={{ scale: 1.05 }}
@@ -334,7 +344,7 @@ const Calendar = () => {
           <WeekDay key={day}>{day}</WeekDay>
         ))}
         
-        {getDaysInMonth(currentMonth).map((date, index) => (
+        {getDaysInMonth(currentDate).map((date, index) => (
           <DayCell
             key={index}
             $isToday={isToday(date)}
@@ -402,6 +412,12 @@ const Calendar = () => {
           ))}
         </AnimatePresence>
       </EventsList>
+
+      <NewEventModal
+        isOpen={isNewEventModalOpen}
+        onClose={() => setIsNewEventModalOpen(false)}
+        onSubmit={handleNewEvent}
+      />
     </PageContainer>
   );
 };

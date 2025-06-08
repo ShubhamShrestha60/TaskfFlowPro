@@ -14,6 +14,7 @@ import {
   FaEdit,
   FaFlag
 } from 'react-icons/fa';
+import NewTaskModal from '../components/tasks/NewTaskModal';
 
 const PageContainer = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
@@ -215,6 +216,7 @@ const IconButton = styled(motion.button)`
 const Tasks = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('all');
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 
   const tasks = [
     {
@@ -270,11 +272,15 @@ const Tasks = () => {
     return priority.charAt(0).toUpperCase() + priority.slice(1);
   };
 
+  const handleNewTask = (taskData) => {
+    console.log('New task:', taskData);
+  };
+
   return (
     <PageContainer>
       <Header>
         <Title>Tasks</Title>
-        <Subtitle>Manage and organize your tasks efficiently</Subtitle>
+        <Subtitle>Manage and track your team's tasks</Subtitle>
       </Header>
 
       <ToolBar>
@@ -287,26 +293,25 @@ const Tasks = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </SearchBar>
-
-        <Button
-          $variant="primary"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
+        <Button $variant="primary" onClick={() => setIsNewTaskModalOpen(true)}>
           <FaPlus />
           New Task
         </Button>
-
-        <Button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <Button>
           <FaFilter />
           Filter
         </Button>
-
-        <Button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <Button>
           <FaSort />
           Sort
         </Button>
       </ToolBar>
+
+      <NewTaskModal 
+        isOpen={isNewTaskModalOpen}
+        onClose={() => setIsNewTaskModalOpen(false)}
+        onSubmit={handleNewTask}
+      />
 
       <TaskGrid>
         <AnimatePresence>
