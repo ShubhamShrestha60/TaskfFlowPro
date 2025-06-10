@@ -49,6 +49,8 @@ const MainContent = styled(motion.main)`
     margin-left: 0;
     width: 100%;
     padding: 1rem;
+    transition: transform ${({ theme }) => theme.transition.base};
+    transform: translateX(${({ $isMobileNavOpen }) => $isMobileNavOpen ? '280px' : '0'});
 
     &::before {
       left: 0;
@@ -71,6 +73,8 @@ const PageContent = styled(motion.div)`
 
   @media (max-width: 768px) {
     padding: 0;
+    width: calc(100% - 1rem);
+    margin: 0 0.5rem;
   }
 `;
 

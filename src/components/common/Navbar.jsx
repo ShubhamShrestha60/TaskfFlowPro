@@ -27,6 +27,8 @@ const NavbarContainer = styled(motion.nav)`
   @media (max-width: 768px) {
     left: 0;
     padding: 0 ${({ theme }) => theme.spacing.md};
+    position: fixed;
+    width: 100%;
   }
 `;
 
@@ -118,6 +120,10 @@ const NavActions = styled.div`
   @media (max-width: 768px) {
     gap: ${({ theme }) => theme.spacing.sm};
   }
+
+  @media (max-width: 480px) {
+    margin-left: auto;
+  }
 `;
 
 const NotificationBadge = styled(motion.span)`
@@ -152,6 +158,10 @@ const ProfileButton = styled(motion.button)`
     padding: ${({ theme }) => theme.spacing.sm};
     
     .profile-info {
+      display: none;
+    }
+
+    svg:last-child {
       display: none;
     }
   }
