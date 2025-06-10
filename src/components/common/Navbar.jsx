@@ -7,7 +7,8 @@ import {
   FaUserCircle, 
   FaCog, 
   FaSignOutAlt,
-  FaChevronDown
+  FaChevronDown,
+  FaBars
 } from 'react-icons/fa';
 import ProfileSettings from './ProfileSettings';
 
@@ -22,6 +23,37 @@ const NavbarContainer = styled(motion.nav)`
   border-bottom: 1px solid ${({ theme }) => theme.borderColor};
   z-index: ${({ theme }) => theme.zIndex.navbar};
   ${({ theme }) => theme.mixins.flexBetween};
+
+  @media (max-width: 768px) {
+    left: 0;
+    padding: 0 ${({ theme }) => theme.spacing.md};
+  }
+`;
+
+const IconButton = styled(motion.button)`
+  ${({ theme }) => theme.mixins.flexCenter};
+  width: 40px;
+  height: 40px;
+  border-radius: ${({ theme }) => theme.radius.lg};
+  color: ${({ theme }) => theme.textSecondary};
+  transition: all ${({ theme }) => theme.transition.base};
+  position: relative;
+
+  &:hover {
+    background: ${({ theme }) => theme.primary}10;
+    color: ${({ theme }) => theme.primary};
+  }
+
+  svg {
+    font-size: 1.25rem;
+  }
+`;
+
+const MobileMenuButton = styled(IconButton)`
+  display: none;
+  @media (max-width: 768px) {
+    display: flex;
+  }
 `;
 
 const SearchContainer = styled.div`
@@ -29,6 +61,20 @@ const SearchContainer = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 0 ${({ theme }) => theme.spacing.xl};
+
+  @media (max-width: 1024px) {
+    max-width: 400px;
+    margin: 0 ${({ theme }) => theme.spacing.lg};
+  }
+
+  @media (max-width: 768px) {
+    max-width: none;
+    margin: 0 ${({ theme }) => theme.spacing.md};
+  }
+
+  @media (max-width: 480px) {
+    display: none;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -68,31 +114,16 @@ const SearchIcon = styled(FaSearch)`
 const NavActions = styled.div`
   ${({ theme }) => theme.mixins.flexCenter};
   gap: ${({ theme }) => theme.spacing.md};
-`;
 
-const IconButton = styled(motion.button)`
-  position: relative;
-  width: 40px;
-  height: 40px;
-  border-radius: ${({ theme }) => theme.radius.lg};
-  color: ${({ theme }) => theme.textSecondary};
-  ${({ theme }) => theme.mixins.flexCenter};
-  transition: ${({ theme }) => theme.transition.base};
-
-  &:hover {
-    background: ${({ theme }) => theme.bgSecondary};
-    color: ${({ theme }) => theme.text};
-  }
-
-  svg {
-    font-size: 1.25rem;
+  @media (max-width: 768px) {
+    gap: ${({ theme }) => theme.spacing.sm};
   }
 `;
 
 const NotificationBadge = styled(motion.span)`
   position: absolute;
-  top: -2px;
-  right: -2px;
+  top: 4px;
+  right: 4px;
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -102,6 +133,7 @@ const NotificationBadge = styled(motion.span)`
   font-weight: ${({ theme }) => theme.fontWeight.medium};
   ${({ theme }) => theme.mixins.flexCenter};
   border: 2px solid ${({ theme }) => theme.cardBg};
+  pointer-events: none;
 `;
 
 const ProfileButton = styled(motion.button)`
@@ -114,6 +146,14 @@ const ProfileButton = styled(motion.button)`
 
   &:hover {
     background: ${({ theme }) => theme.bgSecondary};
+  }
+
+  @media (max-width: 768px) {
+    padding: ${({ theme }) => theme.spacing.sm};
+    
+    .profile-info {
+      display: none;
+    }
   }
 
   img {
@@ -194,7 +234,7 @@ const dropdownVariants = {
   }
 };
 
-const Navbar = () => {
+const Navbar = ({ toggleMobileNav }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -209,29 +249,30 @@ const Navbar = () => {
     <NavbarContainer
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.4 }}
     >
+      <MobileMenuButton onClick={toggleMobileNav}>
+        <FaBars />
+      </MobileMenuButton>
+
       <SearchContainer>
-        <SearchIcon />
         <SearchInput
           type="text"
           placeholder="Search tasks, projects, or team members..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
+        <SearchIcon />
       </SearchContainer>
 
       <NavActions>
-        <IconButton
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
+        <IconButton>
           <FaBell />
           {notifications > 0 && (
             <NotificationBadge
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             >
               {notifications}
             </NotificationBadge>

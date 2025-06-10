@@ -65,12 +65,13 @@ const commonTokens = {
     base: 0,
     raised: 1,
     dropdown: 1000,
-    navbar: 1200,
     sticky: 1100,
-    overlay: 1300,
-    modal: 1400,
-    popover: 1500,
-    tooltip: 1600,
+    navbar: 1200,
+    sidebar: 1300,
+    overlay: 1400,
+    modal: 1500,
+    popover: 1600,
+    tooltip: 1700,
   },
 };
 

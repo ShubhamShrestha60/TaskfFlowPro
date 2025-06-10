@@ -11,6 +11,8 @@ const Overlay = styled(motion.div)`
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  z-index: ${({ theme }) => theme.zIndex.modal};
+  isolation: isolate;
 `;
 
 const Container = styled(motion.div)`
@@ -22,6 +24,8 @@ const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  position: relative;
+  z-index: ${({ theme }) => theme.zIndex.modal + 1};
 `;
 
 const Header = styled.div`

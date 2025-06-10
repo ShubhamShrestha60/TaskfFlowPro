@@ -15,6 +15,7 @@ const ModalOverlay = styled(motion.div)`
   justify-content: center;
   z-index: ${({ theme }) => theme.zIndex.modal};
   padding: 1rem;
+  isolation: isolate;
 `;
 
 const ModalContent = styled(motion.div)`
@@ -26,6 +27,7 @@ const ModalContent = styled(motion.div)`
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border: 1px solid ${({ theme }) => theme.borderColor};
+  z-index: ${({ theme }) => theme.zIndex.modal + 1};
 `;
 
 const ModalHeader = styled.div`

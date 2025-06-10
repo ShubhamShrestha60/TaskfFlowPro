@@ -26,10 +26,16 @@ const SidebarContainer = styled(motion.div)`
   border-right: 1px solid ${({ theme }) => theme.borderColor};
   display: flex;
   flex-direction: column;
-  transition: width ${({ theme }) => theme.transition.base};
+  transition: all ${({ theme }) => theme.transition.base};
   z-index: ${({ theme }) => theme.zIndex.sidebar};
   overflow-x: hidden;
   ${({ theme }) => theme.mixins.scrollbar(theme)};
+
+  @media (max-width: 768px) {
+    transform: translateX(${({ $isMobileNavOpen }) => $isMobileNavOpen ? '0' : '-100%'});
+    width: 280px !important;
+    z-index: ${({ theme }) => theme.zIndex.modal};
+  }
 `;
 
 const Logo = styled.div`
@@ -52,6 +58,7 @@ const Logo = styled.div`
 const NavSection = styled.div`
   padding: ${({ theme }) => theme.spacing.md};
   flex: 1;
+  overflow-y: auto;
 
   h2 {
     font-size: ${({ theme }) => theme.fontSize.sm};
@@ -61,6 +68,10 @@ const NavSection = styled.div`
     margin: ${({ theme }) => theme.spacing.md} 0;
     transition: opacity ${({ theme }) => theme.transition.base};
     opacity: ${props => props.$isCollapsed ? 0 : 1};
+
+    @media (max-width: 768px) {
+      opacity: 1;
+    }
   }
 `;
 
@@ -89,12 +100,20 @@ const NavLink = styled(Link)`
     font-size: 1.25rem;
     min-width: 1.25rem;
     margin-right: ${props => props.$isCollapsed ? 0 : '1rem'};
+
+    @media (max-width: 768px) {
+      margin-right: 1rem;
+    }
   }
 
   span {
     ${({ theme }) => theme.mixins.textEllipsis};
     opacity: ${props => props.$isCollapsed ? 0 : 1};
     transition: opacity ${({ theme }) => theme.transition.base};
+
+    @media (max-width: 768px) {
+      opacity: 1;
+    }
   }
 `;
 
@@ -126,9 +145,24 @@ const CollapseButton = styled(IconButton)`
   position: absolute;
   right: ${({ theme }) => theme.spacing.sm};
   top: ${({ theme }) => theme.spacing.sm};
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
 
-const Sidebar = ({ toggleTheme, theme }) => {
+const CloseButton = styled(IconButton)`
+  display: none;
+  position: absolute;
+  right: ${({ theme }) => theme.spacing.sm};
+  top: ${({ theme }) => theme.spacing.sm};
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`;
+
+const Sidebar = ({ toggleTheme, theme, isMobileNavOpen, toggleMobileNav }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const location = useLocation();
 
@@ -148,13 +182,14 @@ const Sidebar = ({ toggleTheme, theme }) => {
   return (
     <SidebarContainer
       $isCollapsed={isCollapsed}
+      $isMobileNavOpen={isMobileNavOpen}
       initial={{ x: -280 }}
       animate={{ x: 0 }}
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <Logo>
         <AnimatePresence>
-          {!isCollapsed && (
+          {(!isCollapsed || isMobileNavOpen) && (
             <motion.h1
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -171,6 +206,13 @@ const Sidebar = ({ toggleTheme, theme }) => {
         >
           {isCollapsed ? <FaBars /> : <FaTimes />}
         </CollapseButton>
+        <CloseButton
+          onClick={toggleMobileNav}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+        >
+          <FaTimes />
+        </CloseButton>
       </Logo>
 
       <NavSection $isCollapsed={isCollapsed}>
@@ -181,6 +223,11 @@ const Sidebar = ({ toggleTheme, theme }) => {
             to={item.path}
             $isActive={location.pathname === item.path}
             $isCollapsed={isCollapsed}
+            onClick={() => {
+              if (window.innerWidth <= 768) {
+                toggleMobileNav();
+              }
+            }}
           >
             {item.icon}
             <span>{item.label}</span>
@@ -194,6 +241,11 @@ const Sidebar = ({ toggleTheme, theme }) => {
             to={item.path}
             $isActive={location.pathname === item.path}
             $isCollapsed={isCollapsed}
+            onClick={() => {
+              if (window.innerWidth <= 768) {
+                toggleMobileNav();
+              }
+            }}
           >
             {item.icon}
             <span>{item.label}</span>
