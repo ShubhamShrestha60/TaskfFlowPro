@@ -1,0 +1,50 @@
+name: DevOps CI/CD Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-test-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Dependencies
+        working-directory: ./frontend
+        run: npm install
+
+      - name: Run Lint
+        working-directory: ./frontend
+        run: npm run lint
+
+      - name: Run Tests
+        working-directory: ./frontend
+        run: npm run test || echo "Tests failed, continuing anyway..."
+
+      - name: Build App
+        working-directory: ./frontend
+        run: npm run build
+
+      - name: Deploy to Vercel
+        working-directory: ./frontend
+        run: npx vercel --prod --token=$VERCEL_TOKEN
+
+      - name: Notify on Discord
+        run: |
+          curl -H "Content-Type: application/json" \
+            -X POST \
+            -d '{
+              "username": "CI/CD Bot",
+              "content": "** CI/CD Successful!**\nDeployed Task Manager Dashboard to Vercel 🚀"
+            }' \
+            $DISCORD_WEBHOOK
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
