@@ -226,7 +226,7 @@ const ChatModal = ({ isOpen, onClose, recipient, status }) => {
     },
     {
       id: 3,
-      content: 'Sure, I'd be happy to help. What specifically would you like to know?',
+      content: "Sure, I'd be happy to help. What specifically would you like to know?",
       time: '10:32 AM',
       isSent: false
     }

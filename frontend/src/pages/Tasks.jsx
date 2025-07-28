@@ -215,7 +215,7 @@ const IconButton = styled(motion.button)`
 
 const Tasks = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filter, setFilter] = useState('all');
+  // const [filter, setFilter] = useState('all');
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
 
   const tasks = [

@@ -293,13 +293,13 @@ const Notifications = () => {
     }
   ]);
 
-  const handleMarkAsRead = (id) => {
-    setNotifications(prev =>
-      prev.map(notif =>
-        notif.id === id ? { ...notif, unread: false } : notif
-      )
-    );
-  };
+  // const handleMarkAsRead = (id) => {
+  //   setNotifications(prev =>
+  //     prev.map(notif =>
+  //       notif.id === id ? { ...notif, unread: false } : notif
+  //     )
+  //   );
+  // };
 
   const handleClearAll = () => {
     setNotifications([]);
