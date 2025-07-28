@@ -1,15 +1,16 @@
-name: DevOps CI/CD Pipeline
+name: Deploy to Netlify
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
-  build-test-deploy:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Setup Node.js
@@ -17,25 +18,31 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         working-directory: ./frontend
         run: npm install
 
-      - name: Run Lint
+      - name: Run lint
         working-directory: ./frontend
         run: npm run lint
 
-      - name: Run Tests
+      - name: Run tests
         working-directory: ./frontend
         run: npm run test || echo "Tests failed, continuing anyway..."
 
-      - name: Build App
+      - name: Build project
         working-directory: ./frontend
         run: npm run build
 
-      - name: Deploy to Vercel
-        working-directory: ./frontend
-        run: npx vercel --prod --token=$VERCEL_TOKEN
+      - name: Deploy to Netlify
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: ./frontend/dist
+          production-branch: main
+          deploy-message: "Deployed via GitHub Actions 🚀"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
 
       - name: Notify on Discord
         run: |
@@ -43,7 +50,7 @@ jobs:
             -X POST \
             -d '{
               "username": "CI/CD Bot",
-              "content": "** CI/CD Successful!**\nDeployed Task Manager Dashboard to Vercel 🚀"
+              "content": "**✅ Deployment successful!** 🚀 Your app is live on Netlify!"
             }' \
             $DISCORD_WEBHOOK
         env:
